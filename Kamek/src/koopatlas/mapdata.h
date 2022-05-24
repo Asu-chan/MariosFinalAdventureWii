@@ -273,6 +273,7 @@ class dKPMapData_c {
 		dKPLayer_s *pathLayer;
 
 		dDvdLoader_c bgLoader;
+		dDvdLoader_c lavaLoader;
 
 		dKPNodeExtra_c *levelNodeExtraArray;
 

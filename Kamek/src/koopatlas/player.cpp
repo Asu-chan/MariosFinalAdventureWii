@@ -76,8 +76,10 @@ int daWMPlayer_c::onExecute() {
 	if (dScKoopatlas_c::instance->mapIsRunning())
 		dScKoopatlas_c::instance->pathManager.execute();
 
-	this->modelHandler->update();
-	pats[((dPlayerModel_c*)modelHandler->mdlClass)->currentPlayerModelID].process();
+	if(!dScKoopatlas_c::instance->isGamePaused) {
+		this->modelHandler->update();
+		pats[((dPlayerModel_c*)modelHandler->mdlClass)->currentPlayerModelID].process();
+	}
 
 	mMtx myMatrix;
 	myMatrix.scale(scale.x, scale.y, scale.z);

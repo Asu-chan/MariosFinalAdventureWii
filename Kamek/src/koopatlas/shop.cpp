@@ -5,6 +5,7 @@ CREATE_STATE(dWMShop_c, ShowWait);
 CREATE_STATE(dWMShop_c, ButtonActivateWait);
 CREATE_STATE(dWMShop_c, CoinCountdown);
 CREATE_STATE(dWMShop_c, Wait);
+CREATE_STATE(dWMShop_c, WaitForEndOfAnims);
 CREATE_STATE(dWMShop_c, HideWait);
 
 void dWMShop_c::ShopModel_c::setupItem(float x, float y, ItemTypes type) {
@@ -79,7 +80,7 @@ void dWMShop_c::ShopModel_c::execute() {
 	model._vf1C();
 
 	if(this->animation.isAnimationDone()) {
-		OSReport("Animaiton Complete");
+		OSReport("Animation Complete");
 		if (this->isLakitu) {
 			OSReport("Setting animation to idle");
 			playAnim("idle", 1.0f, 0);
@@ -97,7 +98,14 @@ void dWMShop_c::ShopModel_c::draw() {
 	mtx.translation(x, y, 1000.0f);
 	model.setDrawMatrix(mtx);
 
-	float s = scaleFactor * scaleEase;
+	float buttonScale = 1.0f;
+	if(associatedButton >= 0) {
+		if(associatedButton < 4) buttonScale = dWMShop_c::instance->Buttons[associatedButton]->effectiveMtx[1][1];
+		else if(associatedButton == 4) buttonScale = dWMShop_c::instance->Btn1Base->effectiveMtx[1][1];
+		else if(associatedButton == 5) buttonScale = dWMShop_c::instance->Btn2Base->effectiveMtx[1][1];
+	}
+
+	float s = scaleFactor * scaleEase * buttonScale;
 
 	Vec scale = {s, s, s};
 	model.setScale(&scale);
@@ -149,12 +157,18 @@ int dWMShop_c::onCreate() {
 		static const char *brlanNames[] = {
 			"shop_Show.brlan",
 			"shop_Hide.brlan",
-			"shop_ActivateButton.brlan",
-			"shop_DeactivateButton.brlan",
+			"shop_InButton.brlan",
+			"shop_OnButton.brlan",
+			"shop_IdleButton.brlan",
+			"shop_HitButton.brlan",
+			"shop_OffButton.brlan",
 			"shop_CountCoin.brlan"
 		};
 		static const char *groupNames[] = {
 			"BaseGroup", "BaseGroup",
+			"GBtn00", "GBtn01", "GBtn02", "GBtn03", "GBtn1", "GBtn2",
+			"GBtn00", "GBtn01", "GBtn02", "GBtn03", "GBtn1", "GBtn2",
+			"GBtn00", "GBtn01", "GBtn02", "GBtn03", "GBtn1", "GBtn2",
 			"GBtn00", "GBtn01", "GBtn02", "GBtn03", "GBtn1", "GBtn2",
 			"GBtn00", "GBtn01", "GBtn02", "GBtn03", "GBtn1", "GBtn2",
 			"GCoinCount"
@@ -163,11 +177,14 @@ int dWMShop_c::onCreate() {
 			0, 1,
 			2, 2, 2, 2, 2, 2,
 			3, 3, 3, 3, 3, 3,
-			4,
+			4, 4, 4, 4, 4, 4,
+			5, 5, 5, 5, 5, 5,
+			6, 6, 6, 6, 6, 6,
+			7,
 		};
 
-		layout.loadAnimations(brlanNames, 5);
-		layout.loadGroups(groupNames, brlanIDs, 15);
+		layout.loadAnimations(brlanNames, 8);
+		layout.loadGroups(groupNames, brlanIDs, 33);
 		layout.disableAllAnimations();
 
 		layout.drawOrder = 1;
@@ -204,8 +221,8 @@ int dWMShop_c::onCreate() {
 			Buttons[i] = layout.findPaneByName(name);
 		}
 
-		Btn1Base = layout.findPaneByName("Btn1_Base");
-		Btn2Base = layout.findPaneByName("Btn2_Base");
+		Btn1Base = layout.findPaneByName("Btn1");
+		Btn2Base = layout.findPaneByName("Btn2");
 		OSReport("Found btn 1,2: %p, %p\n", Btn1Base, Btn2Base);
 
 		leftCol.setTexMap(BtnLeft[0]->material->texMaps);
@@ -298,7 +315,7 @@ void dWMShop_c::beginState_ShowWait() {
 void dWMShop_c::executeState_ShowWait() {
 	if (!layout.isAnimOn(SHOW_ALL)) {
 		selected = 0;
-		layout.enableNonLoopAnim(ACTIVATE_BUTTON);
+		layout.enableNonLoopAnim(ON_BUTTON);
 		state.setState(&StateID_ButtonActivateWait);
 	}
 }
@@ -359,8 +376,10 @@ void dWMShop_c::executeState_Wait() {
 			newSelection = selected + 1;
 
 	} else if (nowPressed & WPAD_TWO) {
-		if (!lakituModel->playingNotEnough)
+		if (!lakituModel->playingNotEnough) {
+			layout.enableNonLoopAnim(HIT_BUTTON+selected);
 			buyItem(selected);
+		}
 		else
 			OSReport("Not Enough is still playing!\n");
 	}
@@ -368,23 +387,42 @@ void dWMShop_c::executeState_Wait() {
 	if (newSelection > -1) {
 		MapSoundPlayer(SoundRelatedClass, SE_SYS_CURSOR, 1);
 
-		layout.enableNonLoopAnim(DEACTIVATE_BUTTON+selected);
-		layout.enableNonLoopAnim(ACTIVATE_BUTTON+newSelection);
+		layout.enableNonLoopAnim(OFF_BUTTON+selected);
+		layout.enableNonLoopAnim(ON_BUTTON+newSelection);
 
 		selected = newSelection;
 		if (newSelection <= 3)
 			lastTopRowChoice = newSelection;
 
-		showSelectCursor();
+		HideSelectCursor(SelectCursorPointer, 0);
+		state.setState(&StateID_WaitForEndOfAnims);
 	}
 }
 void dWMShop_c::endState_Wait() { }
+
+// WaitForEndOfAnims
+void dWMShop_c::beginState_WaitForEndOfAnims() {
+
+}
+void dWMShop_c::executeState_WaitForEndOfAnims() {
+	for(int i = 0; i < 6; i++)
+		if(layout.isAnimOn(ON_BUTTON+i))
+			return;
+	for(int i = 0; i < 6; i++)
+		if(layout.isAnimOn(OFF_BUTTON+i))
+			return;
+
+	state.setState(&StateID_Wait);
+}
+void dWMShop_c::endState_WaitForEndOfAnims() {
+
+}
 
 // HideWait
 void dWMShop_c::beginState_HideWait() {
 	MapSoundPlayer(SoundRelatedClass, SE_SYS_DIALOGUE_OUT_AUTO, 1);
 	layout.enableNonLoopAnim(HIDE_ALL);
-	layout.enableNonLoopAnim(DEACTIVATE_BUTTON+selected);
+	layout.enableNonLoopAnim(OFF_BUTTON+selected);
 
 	timer = 26;
 	MapSoundPlayer(SoundRelatedClass, SE_OBJ_CS_KINOHOUSE_DISAPP, 1);
@@ -424,6 +462,7 @@ void dWMShop_c::endState_HideWait() {
 // Possible 5 coin combos =  2,2,2  /  1,2,3  /  2,3,2  /  3,2,3  /  3,3,3
 // Possible 8 coin combos =  1,1,2,3,3  /  1,2,2,3,3  /  1,2,3,3,3  /  2,2,2,3,3  /  2,2,3,3,3  /  1,3,3,3,3  /  2,3,3,3,3  /  3,3,3,3,3
 
+/*
 const dWMShop_c::ItemTypes dWMShop_c::Inventory[10][12] = { 
 	{ // Yoshi's Island
 		MUSHROOM, FIRE_FLOWER, ICE_FLOWER, PROPELLER,
@@ -476,10 +515,12 @@ const dWMShop_c::ItemTypes dWMShop_c::Inventory[10][12] = {
 		FIRE_FLOWER, FIRE_FLOWER, STARMAN, FIRE_FLOWER, FIRE_FLOWER
 	}
 };
+*/
 
 void dWMShop_c::loadModels() {
 	lakituModel = new ShopModel_c;
 	lakituModel->setupLakitu(shopKind);
+	lakituModel->associatedButton = -1;
 	lakituModel->x = 240.0f;
 	lakituModel->y = 220.0f;
 	if (!IsWideScreen()) {
@@ -516,7 +557,12 @@ void dWMShop_c::loadModels() {
 			effectiveY += 50.0f;
 			itemModels[i].scaleFactor = 1.6f;
 		}
-		itemModels[i].setupItem(effectiveX, effectiveY, Inventory[shopKind][i]);
+
+		if(i < 5) itemModels[i].associatedButton = i;
+		else if(i < 7) itemModels[i].associatedButton = 4;
+		else itemModels[i].associatedButton = 5;
+
+		itemModels[i].setupItem(effectiveX, effectiveY, (dWMShop_c::ItemTypes)dWorldInfo_c::instance->shopInventory[shopKind][i]);
 	}
 }
 void dWMShop_c::deleteModels() {
@@ -598,7 +644,7 @@ void dWMShop_c::buyItem(int item) {
 
 	int invStartIndex = itemDefs[item][1], invCount = itemDefs[item][2];
 	for (int i = 0; i < invCount; i++)
-		appliedItems[(int)Inventory[shopKind][invStartIndex+i]]++;
+		appliedItems[(int)dWorldInfo_c::instance->shopInventory[shopKind][invStartIndex+i]]++;
 
 	for (int i = 0; i < 8; i++) {
 		block->powerups_available[i] += appliedItems[i];

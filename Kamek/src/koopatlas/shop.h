@@ -3,6 +3,7 @@
 
 #include "koopatlas/core.h"
 #include "texmapcolouriser.h"
+#include "worldinfo.h"
 
 class dWMShop_c : public dActor_c {
 	public:
@@ -32,9 +33,12 @@ class dWMShop_c : public dActor_c {
 		enum Animation {
 			SHOW_ALL = 0,
 			HIDE_ALL = 1,
-			ACTIVATE_BUTTON = 2, // 3, 4, 5, 6, 7
-			DEACTIVATE_BUTTON = 8, // 9, 10, 11, 12, 13
-			COUNT_COIN = 14,
+			IN_BUTTON = 2,		// 3,  4,  5,  6,  7
+			ON_BUTTON = 8,		// 9,  10, 11, 12, 13
+			IDLE_BUTTON = 14,	// 15, 16, 17, 18, 19
+			HIT_BUTTON = 20,	// 21, 22, 23, 24, 25
+			OFF_BUTTON = 26,	// 27, 28, 29, 30, 31
+			COUNT_COIN = 32,
 		};
 
 		enum ItemTypes {
@@ -54,7 +58,7 @@ class dWMShop_c : public dActor_c {
 			ITEM_COUNT = 12,
 		};
 
-		static const ItemTypes Inventory[10][12];
+		//static const ItemTypes Inventory[10][12];
 
 		nw4r::lyt::TextBox
 			*Title, *TitleShadow,
@@ -79,6 +83,7 @@ class dWMShop_c : public dActor_c {
 
 				float x, y, scaleFactor, scaleEase;
 				bool isLakitu, playingNotEnough;
+				u8 associatedButton;
 
 				void setupItem(float x, float y, ItemTypes type);
 				void setupLakitu(int id);
@@ -108,6 +113,7 @@ class dWMShop_c : public dActor_c {
 		DECLARE_STATE(ButtonActivateWait);
 		DECLARE_STATE(CoinCountdown);
 		DECLARE_STATE(Wait);
+		DECLARE_STATE(WaitForEndOfAnims);
 		DECLARE_STATE(HideWait);
 };
 

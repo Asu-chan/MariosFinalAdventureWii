@@ -68,8 +68,8 @@ int dWMHud_c::onCreate() {
 		layout.resetAnim(SHOW_HEADER);
 		layout.resetAnim(HIDE_ALL);
 
-		static const char *tbNames[2] = {"MenuButtonInfo", "ItemsButtonInfo"};
-		layout.setLangStrings(tbNames, (int[2]){12, 15}, 4, 2);
+		static const char *tbNames[4] = {"WSELButtonInfo", "MenuButtonInfo", "ItemsButtonInfo", "ViewButtonInfo"};
+		layout.setLangStrings(tbNames, (int[4]){11, 12, 15, 10}, 4, 4);
 
 		static const char *paneNames[] = {
 			"N_IconPos1P_00", "N_IconPos2P_00",
@@ -341,6 +341,34 @@ void dWMHud_c::loadHeaderInfo() {
 void dWMHud_c::loadFooterInfo() {
 	SaveBlock *save = GetSaveFile()->GetBlock(-1);
 
+	if(save->newerWorldName[0] == -1) { // De-hardcoded the W1 name & info :D (This is for mods that don't use the opening cutscene from NewerSMBW. Otherwise, check paladeDude.cpp)
+		WorldInfo *worldInfo = dWorldInfo_c::instance->getWorldInfo(0);
+
+		save->current_world = worldInfo->worldmapID;
+		save->current_path_node = worldInfo->nodeID;
+
+		strncpy(save->newerWorldName, dWorldInfo_c::instance->getNameForWorld(0), 32);
+		save->newerWorldName[31] = 0;
+		save->newerWorldID = worldInfo->NWID;
+		save->currentMapMusic = worldInfo->musicID;
+
+		save->fsTextColours[0] = worldInfo->FSTextColour0;
+		save->fsHintColours[0] = worldInfo->FSHintColour0;
+		save->hudTextColours[0] = worldInfo->HUDTextColour0;
+		save->fsTextColours[1] = worldInfo->FSTextColour1;
+		save->fsHintColours[1] = worldInfo->FSHintColour1;
+		save->hudTextColours[1] = worldInfo->HUDTextColour1;
+
+		save->hudHintH = worldInfo->HUDH;
+		save->hudHintS = worldInfo->HUDS;
+		save->hudHintL = worldInfo->HUDL;
+
+		if (!(save->titleScreenWorld == 3 && save->titleScreenLevel == 10)) {
+			save->titleScreenWorld = worldInfo->titlescreenWorld;
+			save->titleScreenLevel = worldInfo->titlescreenLevel;
+		}
+	}
+
 	wchar_t convertedWorldName[32];
 	int i;
 	for (i = 0; i < 32; i++) {
@@ -494,9 +522,12 @@ void dWMHud_c::updatePressableButtonThingies() {
 		int beef = (cntType == 0) ? 0 : 1;
 		GameMgrP->currentControllerType = beef;
 
-		WriteBMGToTextBox(
-				layout.findTextBoxByName("ItemsButtonInfo"),
-				GetBMG(), 4, 15, 0);
+		// WriteBMGToTextBox(
+		// 		layout.findTextBoxByName("ItemsButtonInfo"),
+		// 		GetBMG(), 4, 15, 0);
+		
+		static const char *tbNames[4] = {"WSELButtonInfo", "MenuButtonInfo", "ItemsButtonInfo", "ViewButtonInfo"};
+		layout.setLangStrings(tbNames, (int[4]){11, 12, 15, 10}, 4, 4);
 	}
 }
 

@@ -91,6 +91,7 @@ char *strcat(char *destination, const char *source);
 extern "C" void *memcpy(void *dest, const void *src, size_t count);
 void *memset(void *ptr, int value, size_t num);
 int memcmp(const void *ptr1, const void *ptr2, size_t num);
+void mbstowcs(wchar_t *destination, const char *source, size_t count);
 
 void *AllocFromGameHeap1(u32 size);
 void FreeFromGameHeap1(void *block);

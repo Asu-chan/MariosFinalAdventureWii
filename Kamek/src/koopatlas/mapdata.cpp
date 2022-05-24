@@ -144,8 +144,9 @@ bool dKPMapData_c::load(const char *filename) {
 
 	bool didLoadTilesets = loadTilesets();
 	bool didLoadBG = (bgLoader.load(data->backgroundName) != 0);
+	bool didLoadBG2 = (lavaLoader.load("/Maps/Lava.brres") != 0);
 
-	return didLoadTilesets && didLoadBG;
+	return didLoadTilesets && didLoadBG && didLoadBG2;
 }
 
 bool dKPMapData_c::loadTilesets() {
@@ -184,6 +185,7 @@ void dKPMapData_c::unloadTilesets() {
 	}
 
 	bgLoader.unload();
+	lavaLoader.unload();
 }
 
 void dKPMapData_c::fixup() {

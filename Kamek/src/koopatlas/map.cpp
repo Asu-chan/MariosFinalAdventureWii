@@ -46,12 +46,18 @@ int dWMMap_c::onCreate() {
 	bool result = renderer.setup(&renderer.allocator);
 
 	bgMatrix.translation(0.0f, 0.0f, -500.0f);
+	lavaMatrix.translation(11734.0f, -6000.0f, -490.0f);
 
 	allocator.link(-1, GameHeaps[0], 0, 0x20);
 	nw4r::g3d::ResFile rf(dScKoopatlas_c::instance->mapData.bgLoader.buffer);
 	rf.CheckRevision();
 	rf.Init();
 	rf.Bind(rf);
+
+	nw4r::g3d::ResFile rf2(dScKoopatlas_c::instance->mapData.lavaLoader.buffer);
+	rf2.CheckRevision();
+	rf2.Init();
+	rf2.Bind(rf2);
 
 	// Todo: Check flags. 0x32C definitely supports texsrt
 	nw4r::g3d::ResMdl modelRes = rf.GetResMdl("KpBG");
@@ -61,6 +67,14 @@ int dWMMap_c::onCreate() {
 	bgSrtAnm.setup(modelRes, anmRes, &allocator, 0, 1);
 	bgSrtAnm.bindEntry(&bgModel, anmRes, 0, 0);
 	bgModel.bindAnim(&bgSrtAnm, 0.0f);
+
+	nw4r::g3d::ResMdl modelRes2 = rf2.GetResMdl("KpBG");
+	nw4r::g3d::ResAnmTexSrt anmRes2 = rf2.GetResAnmTexSrt("KpBG");
+
+	lavaModel.setup(modelRes2, &allocator, 0x32C, 1, 0);
+	lavaSrtAnm.setup(modelRes2, anmRes2, &allocator, 0, 1);
+	lavaSrtAnm.bindEntry(&lavaModel, anmRes2, 0, 0);
+	lavaModel.bindAnim(&lavaSrtAnm, 0.0f);
 
 	static int EffectGroups[] = {1,0,4,5,7,8,9,10,11,12,13,14};
 	static int EffectPrios[] = {141,142,143,129,144,145,146,147,148,149,150,151};
@@ -100,12 +114,22 @@ int dWMMap_c::onCreate() {
 }
 
 int dWMMap_c::onDelete() { return true; }
+
+#define CSMENU_ACTIVE(csm) (*((bool*)(((u32)(csm))+0x271)))
+
 int dWMMap_c::onExecute() {
-	bgSrtAnm.process();
+	if (!dScKoopatlas_c::instance->isGamePaused) {
+		bgSrtAnm.process();
+		lavaSrtAnm.process();
+	}
 
 	bgModel.setDrawMatrix(bgMatrix);
 	bgModel.setScale(1.0f, 1.0f, 1.0f);
 	bgModel.calcWorld(false);
+
+	lavaModel.setDrawMatrix(lavaMatrix);
+	lavaModel.setScale(1.0f, 1.0f, 1.0f);
+	lavaModel.calcWorld(false);
 
 	doEffects();
 
@@ -124,6 +148,7 @@ int dWMMap_c::onDraw() {
 
 	renderer.scheduleForDrawing();
 	bgModel.scheduleForDrawing();
+	lavaModel.scheduleForDrawing();
 
 	if (showLaunchStar)
 		launchStarModel.scheduleForDrawing();
@@ -374,6 +399,10 @@ void dWMMap_c::renderer_c::renderDoodadLayer(dKPLayer_s *layer) {
 				dKPDoodad_s::animation_s *anim = &doodad->animations[j];
 
 				if (anim->delayOffset == 0) {
+					if(dScKoopatlas_c::instance->isGamePaused) {
+						anim->baseTick++;
+					}
+
 					u32 baseTick = anim->baseTick;
 					if (baseTick == 0) {
 						anim->baseTick = baseTick = GlobalTickCount;
@@ -556,62 +585,14 @@ void dWMMap_c::doEffects() {
 	if (mapID == 1) {
 		// Fullmap.
 		// Torches
-		static const VEC3 torchPos[6] = {
-			{8402.0f, -5528.0f, 7000.0f}, // Big Tower
-			{8444.0f, -5524.0f, 7000.0f}, // Tower
-			{8358.0f, -5524.0f, 7000.0f}, // Tower
-			{8420.0f, -5534.0f, 7000.0f}, // Tower
-			{8380.0f, -5534.0f, 7000.0f}, // Tower
-			{7804.0f, -5064.0f, 7000.0f}, // Castle
-		};
+		static const VEC3 torchPos = {11978.0f, -6350.0f, 7000.0f}; // [MFAW] Big Fire Tower
 		const VEC3 reallyBigScale = {1.6f, 1.6f, 1.6f};
-		const VEC3 bigScale = {1.2f, 1.2f, 1.2f};
-		const VEC3 smallScale = {0.25f, 0.25f, 0.25f};
-		for (int i = 0; i < 6; i++) {
-			const VEC3 *whichScale = &smallScale;
-			if (i == 0)
-				whichScale = &bigScale;
-			else if (i == 5)
-				whichScale = &reallyBigScale;
-			effects[i].spawn("Wm_cs_torch", 0, &torchPos[i], &efRot, whichScale);
-		}
+		effects[0].spawn("Wm_cs_torch", 0, &torchPos, &efRot, &reallyBigScale);
 
-		// Mountain Snow
-		const VEC3 efPos = {6000.0f, -5250.0f, 7000.0f};
-		effects[6].spawn("Wm_cs_snow_b", 0, &efPos, &efRot, 0);
-	}
-
-	if (mapID == 4) {
-		// Freezeflame Volcano -- DONE
-		const VEC3 efPos = {2200.0f, -2000.0f, 7000.0f};
-		effects[0].spawn("Wm_cs_firespark", 0, &efPos, &efRot, 0);
-	}
-
-	if (mapID == 6) {
-		// Koopa Planet -- DONE
-		const VEC3 efPos = {2200.0f, -2000.0f, 7000.0f};
-		effects[0].spawn("Wm_cs_firespark", 0, &efPos, &efRot, 0);
-	}
-
-	if (mapID == 7) {
-		// Koopa Core -- DONE
-		// Main area
-		const VEC3 efPos = {2500.0f, -2900.0f, 7000.0f};
-		effects[0].spawn("Wm_cs_firespark", 0, &efPos, &efRot, 0);
-		// Castle area
-		const VEC3 efPos2 = {4500.0f, -3800.0f, 7000.0f};
-		effects[1].spawn("Wm_cs_firespark", 0, &efPos2, &efRot, 0);
-		// Challenge House area
-		const VEC3 efPos3 = {2500.0f, -5500.0f, 7000.0f};
-		effects[2].spawn("Wm_cs_firespark", 0, &efPos2, &efRot, 0);
-	}
-
-	if (mapID == 3) {
-		// Mountain Backside -- DONE
-		VEC3 efPos = {3930.0f, -2700.0f, 7000.0f};
-		effects[0].spawn("Wm_cs_snow_a", 0, &efPos, &efRot, 0);
-		efPos.y -= 700.0f;
+		VEC3 efPos = {11200.0f, -7000.0f, 7000.0f};
 		effects[1].spawn("Wm_cs_snow_a", 0, &efPos, &efRot, 0);
+		efPos.y -= 800.0f;
+		effects[2].spawn("Wm_cs_snow_a", 0, &efPos, &efRot, 0);
 	}
 
 }

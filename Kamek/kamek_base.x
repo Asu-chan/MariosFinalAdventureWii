@@ -1188,6 +1188,7 @@ SECTIONS {
 	strcmp = 0x802E1DA4;
 	sprintf = 0x802E1ACC;
 	strrchr = 0x802E1F30;
+	mbstowcs = 0x802DF0EC;
 
 	wcslen = 0x802E470C;
 	wcscpy = 0x802E4728;
@@ -1367,12 +1368,14 @@ SECTIONS {
 	_Z7sprintfPcPKcz = 0x802E1ACC;
 	_Z8snprintfPciPKcz = 0x802E19D8;
 	_Z6strcatPKcS0_ = 0x802E1D2C;
+	_Z8mbstowcsPwPKcm = 0x802DF0EC;
 
 	_Z6memsetPvij = 0x800046B4;
 	sprintf__FPcPCce = 0x802E1ACC;
 	snprintf__FPcUlPCce = 0x802E19D8;
 	memcmp__FPCvPCvUi = 0x802DF388;
 	_Z6strcatPKcS0_ = 0x802E1D2C;
+	mbstowcs__FPwPCcUl = 0x802DF0EC;
 
 	_Znaj = 0x802B9350;
 
@@ -1832,6 +1835,31 @@ SECTIONS {
 
 	spawnCoinJump__7StageE4FRC4VEC3iii = 0x80066630;
 	sub_800757B0__14collisionMgr_cFP4VEC3PfUcic = 0x800757B0;
+
+	daEnSnakeBlock_c__StateID_Move = 0x80B1B3F8;/*mi*/
+	doSomethingElseWithTravelInfoBuffer__SnakeSubEx = 0x80AA73E0;/*mi*/
+	continueFromFirstLoop = 0x80AA7C10;
+	continueFromNodeLoop = 0x80AA7C80;
+	continueFromSnakeBlockLoop3 = 0x80AA7454;
+	continueFromSnakeBlockBackwards = 0x80AA7404;
+	continueFromStoreIsLoopToR9_1 = 0x80AA85A0;
+	continueFromStoreIsLoopToR9_2 = 0x80AA85B0;
+	continueFromOtherDirectionsSpawn = 0x80AA789C;
+	continueFromAdjustSpawnPosition = 0x80AA6F38;
+	continueFromRemoveSFX = 0x80AA85B0;
+	continueFromDoNotMoveIfEvent = 0x80AA72C4;
+	continueFromMakeTIBTwiceAsBig = 0x80AA7C18;
+	continueFromCreateBackwardsData = 0x80AA8154;
+	returnFromDoNotMoveIfEvent = 0x80AA72E0;
+	skipFromRemoveSFX = 0x80AA85DC;
+	cancelNodeLoop = 0x80AA8138;
+	firstLoop = 0x80AA7BC0;
+	loopForNodes = 0x80AA7C2C;
+	finishNodeLoop = 0x80AA8138;
+	abs = 0x802DE804;
+	dRail__getRailByID_static = 0x800D91B0;/*mi*/
+	loc_80AA86FC = 0x80AA86FC;
+	doSomethingElseWithTravelInfoBuffer__10SnakeSubExFv = 0x80AA73E0;/*mi*/
 
 
 	.text : {

@@ -95,18 +95,20 @@ dDvdLoader_c RandTileLoader;
 
 // This is a bit hacky but I'm lazy
 bool LoadLevelInfo();
+bool LoadWorldInfo();
 
 extern "C" bool RandTileLoadHook() {
 	// OSReport("Trying to load...");
 	void *buf = RandTileLoader.load("/NewerRes/RandTiles.bin");
 	bool LIresult = LoadLevelInfo();
+	bool WIresult = LoadWorldInfo();
 	if (buf == 0) {
 		// OSReport("Failed.\n");
 		return false;
 	} else {
 		// OSReport("Successfully loaded RandTiles.bin [%p].\n", buf);
 		RandomTileData::instance = (RandomTileData*)buf;
-		return LIresult;
+		return LIresult && WIresult;
 	}
 }
 

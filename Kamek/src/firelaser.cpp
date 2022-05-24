@@ -31,10 +31,11 @@ CREATE_STATE(daFireLaser_c, pewpewpew);
 
 
 int daFireLaser_c::onCreate() {
-
 	this->timer = 0;
 	this->direction = this->settings & 0xF;
-	this->spitspeed = 8.0;
+
+	this->spitspeed = (float)((this->settings >> 8) & 0xFF) * 0.25f;
+	if(this->spitspeed == 0.0f) this->spitspeed = 8.0f;
 	
 	char eventNum	= (this->settings >> 16) & 0xFF;
 	this->eventFlag = (u64)1 << (eventNum - 1);

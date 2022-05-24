@@ -466,7 +466,7 @@ bool dCreditsMgr_c::loadTitleLayout() {
 			propScale *= 0.85f;
 
 		N_proportionC_00 = titleLayout.findPaneByName("N_proportionC_00");
-		N_proportionC_00->trans.y = -130.0f;
+		// N_proportionC_00->trans.y = -130.0f;
 		N_proportionC_00->scale.x = propScale;
 		N_proportionC_00->scale.y = propScale;
 

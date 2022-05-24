@@ -5,6 +5,7 @@ source_files:
   - ../src/fileload.cpp
   - ../src/scene.S
   - ../src/levelinfo.cpp
+  - ../src/worldinfo.cpp
   - ../src/koopatlas/core.cpp
   - ../src/koopatlas/player.cpp
   - ../src/koopatlas/hud.cpp
@@ -15,6 +16,7 @@ source_files:
   - ../src/koopatlas/shop.cpp
   - ../src/koopatlas/starcoin.cpp
   - ../src/koopatlas/mapmusic.cpp
+  - ../src/koopatlas/worldselector.cpp # Asu's addition
   - ../src/texmapcolouriser.cpp
 
 hooks:
@@ -52,6 +54,11 @@ hooks:
     type: add_func_pointer
     src_addr_pal: 0x80982D1C
     target_func: 'dWMStarCoin_c::build()'
+
+  - name: BuildWMWSEL # WM_MANTA
+    type: add_func_pointer
+    src_addr_pal: 0x809845F8
+    target_func: 'dWMWSEL_c::build()'
 
 
 # fix the STOCK_ITEM references

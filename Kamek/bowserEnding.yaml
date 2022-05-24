@@ -1,0 +1,8 @@
+---
+source_files: [../src/bowserEnding.cpp]
+hooks:
+  - name: ExitToEndingCutsceneAfterBowser
+    type: branch_insn
+    branch_type: bl
+    src_addr_pal: 0x807CF414
+    target_func: 'exitLevelAfterBowser()'

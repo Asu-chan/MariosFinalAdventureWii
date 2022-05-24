@@ -51,6 +51,9 @@ class dWMMap_c : public dBase_c {
 		m3d::mdl_c bgModel;
 		m3d::anmTexSrt_c bgSrtAnm;
 		mMtx bgMatrix;
+		m3d::mdl_c lavaModel;
+		m3d::anmTexSrt_c lavaSrtAnm;
+		mMtx lavaMatrix;
 
 		bool showLaunchStar;
 		float launchStarX, launchStarY;

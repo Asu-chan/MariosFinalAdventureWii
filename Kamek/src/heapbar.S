@@ -126,7 +126,6 @@ asmProcessHeap:
 	# now do it
 	cmpwi r29, 1
 	beq justreport
-	bl cppProcessHeap
 	b gdhbdgdfg
 justreport:
 	mr r5, r4

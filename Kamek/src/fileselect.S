@@ -327,9 +327,8 @@ WarpZoneName:
 
 .align 4
 DefaultSavefileInfoData:
-.string "Yoshi's Island" #15
-.byte 0,0,0,0,0,0,0,0,0,0,0 # 11
-.byte 0,0,0,0,0,0 # 6
+.byte 255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 # 16
+.byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 # 16
 .long 0xFFFF99FF,0x1FB423FF
 .long 0x173714FF,0x3C9135FF
 .long 0xFFFF99FF,0x1FB423FF

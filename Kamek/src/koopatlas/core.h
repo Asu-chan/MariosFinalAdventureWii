@@ -14,6 +14,7 @@
 #include "koopatlas/mapdata.h"
 #include "koopatlas/shop.h"
 #include "koopatlas/starcoin.h"
+#include "koopatlas/worldselector.h"
 #include "koopatlas/hud.h"
 #include "koopatlas/pathmanager.h"
 #include "koopatlas/mapmusic.h"
@@ -38,11 +39,13 @@ void NewerMapDrawFunc();
 #define WM_HUD WM_DANCE_PAKKUN
 #define WM_SHOP WM_TOGEZO
 #define WM_STARCOIN WM_GHOST
+#define WM_WSEL WM_MANTA
 
 class daWMPlayer_c;
 class dWMMap_c;
 class dWMHud_c;
 class dWMShop_c;
+class dWMWSEL_c;
 class dWMStarCoin_c;
 class dWorldCamera_c;
 
@@ -69,6 +72,8 @@ class dScKoopatlas_c : public dScene_c {
 		DECLARE_STATE(PowerupsWait);
 		DECLARE_STATE(ShopWait);
 		DECLARE_STATE(CoinsWait);
+		DECLARE_STATE(WMViewerWait);
+		DECLARE_STATE(WSELWait);
 		DECLARE_STATE(SaveOpen);
 		DECLARE_STATE(SaveSelect);
 		DECLARE_STATE(SaveWindowClose);
@@ -108,6 +113,7 @@ class dScKoopatlas_c : public dScene_c {
 		dWMMap_c *map;
 		dWMShop_c *shop;
 		dWMStarCoin_c *coins;
+		dWMWSEL_c *wsel;
 
 		int currentMapID;
 		const char *mapPath;
@@ -138,6 +144,18 @@ class dScKoopatlas_c : public dScene_c {
 		void showSaveWindow();
 
 		bool keepMusicPlaying;
+
+		bool isGamePaused;
+
+		bool WMViewerVisible = false;
+		struct WMViewerBorder
+		{
+			float xLeft[12], xRight[12], yTop[12], yBottom[12]; //Array -> number of maps
+		};
+		WMViewerBorder WMBorder;
+		bool sfxShouldPlay = false;
+		bool sfxIsPlaying = false;
+		nw4r::snd::SoundHandle scrollHandle;
 };
 
 extern void *_8042A788;

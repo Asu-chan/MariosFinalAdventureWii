@@ -1,5 +1,6 @@
 #include <game.h>
 #include <sfx.h>
+#include "koopatlas/core.h"
 #include "koopatlas/mapmusic.h"
 #include "music.h"
 
@@ -173,6 +174,19 @@ void dKPMusic::stop() {
 
 	if (s_starHandle.Exists())
 		s_starHandle.Stop(15);
+}
+
+
+void dKPMusic::lowerMusic() {
+	dScKoopatlas_c::instance->isGamePaused = true;
+	if (s_handle.Exists())
+		s_handle.SetTrackVolume(3, 10, 0.25f);
+}
+
+void dKPMusic::higherMusic() {
+	dScKoopatlas_c::instance->isGamePaused = false;
+	if (s_handle.Exists())
+		s_handle.SetTrackVolume(3, 10, 1.0f);
 }
 
 
