@@ -615,6 +615,11 @@ void dScKoopatlas_c::executeState_Normal() {
 
 	if (pathManager.doingThings())
 		return;
+	
+	if (scrollHandle.Exists()) {
+		scrollHandle.Stop(0);
+		sfxIsPlaying = false;
+	}
 
 	int nowPressed = Remocon_GetPressed(GetActiveRemocon());
 
@@ -902,12 +907,7 @@ void dScKoopatlas_c::executeState_WMViewerWait() {
 	int nowPressed = Remocon_GetPressed(GetActiveRemocon());
 
 	if (nowPressed & WPAD_A) {
-		if (sfxIsPlaying) {
-			scrollHandle.Stop(0);
-			sfxIsPlaying = false;
-		}
-		if (scrollHandle.Exists())
-		{
+		if (sfxIsPlaying || scrollHandle.Exists()) {
 			scrollHandle.Stop(0);
 			sfxIsPlaying = false;
 		}
