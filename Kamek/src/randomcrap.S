@@ -612,7 +612,7 @@ ReplaceExceptionOccurred:
 
 .data
 NewExceptionOccurred:
-.string "Whoops! MFAW v1.0.1 has crashed.\nPlease take a screenshot of the info below\nand send it into our discord server:\nhttps://discord.gg/xc8rBfzej2\n\nYou can scroll through this report using the D-Pad.\n"
+.string "Whoops! MFAW v1.0.2 has crashed.\nPlease take a screenshot of the info below\nand send it into our discord server:\nhttps://discord.gg/xc8rBfzej2\n\nYou can scroll through this report using the D-Pad.\n"
 UniLogStr: .string "[ULog] returning %8x to: %x > %x > %x > %x > %x > %x\n"
 #WillAlloc: .string "[AH] Will allocate %x bytes aligned by %x\n"
 #Alloced: .string "[AH] Allocated %p\n"

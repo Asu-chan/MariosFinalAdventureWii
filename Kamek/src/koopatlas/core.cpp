@@ -1266,7 +1266,7 @@ static const wchar_t *completionMsgs[] = {
 	L"You have collected all the\nnecessary \x0B\x014F\xBEEF coins to enter\nthe Special World!",
 	L"You have collected all the \x0B\x014F\xBEEF Star\nCoins in the game!",
 	L"You've found every \x0B\x013B\xBEEF exit in the\ngame!",
-	L"You've completed everything in\nNEWER SUPER MARIO BROS. Wii!\n\nWe present you a new quest.\nTry pressing \x0B\x0122\xBEEF, \x0B\x0123\xBEEF and \x0B\x0125\xBEEF\n on the Star Coin menu."
+	L"You've completed everything in\nMario's Final Aventure Wii!\n\nWe present you a new quest.\nTry pressing \x0B\x0122\xBEEF, \x0B\x0123\xBEEF and \x0B\x0125\xBEEF\n on the Star Coin menu."
 };
 
 void dScKoopatlas_c::beginState_CompletionMsg() {

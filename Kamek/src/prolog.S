@@ -61,7 +61,7 @@ startLoop:
 
 .data
 PMsg:
-	.string "Mario's Final Adventure Wii\nMFAW Hacks by Asu-chan 2021-2022\nNewerSMBW Hacks by Treeki and Tempus 2009-2013\nMFAW v1.0.1\n.ctors: %p - %p\n"
+	.string "Mario's Final Adventure Wii\nMFAW Hacks by Asu-chan 2021-2022\nNewerSMBW Hacks by Treeki and Tempus 2009-2013\nMFAW v1.0.2\n.ctors: %p - %p\n"
 
 PMsg2:
 	.string "%d inits called\n"
